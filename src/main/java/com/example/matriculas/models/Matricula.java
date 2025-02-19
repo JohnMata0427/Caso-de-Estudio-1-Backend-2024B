@@ -1,6 +1,6 @@
 package com.example.matriculas.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,11 +39,11 @@ public class Matricula {
 
   @ManyToOne
   @JoinColumn(name = "id_estudiante", insertable = false, updatable = false)
-  @JsonBackReference(value = "estudiante-matricula")
+  @JsonIgnore
   private Estudiante estudiante;
 
   @ManyToOne
   @JoinColumn(name = "id_materia", insertable = false, updatable = false)
-  @JsonBackReference(value = "materia-matricula")
+  @JsonIgnore
   private Materia materia;
 }
