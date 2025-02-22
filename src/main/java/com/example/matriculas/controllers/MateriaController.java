@@ -3,6 +3,8 @@ package com.example.matriculas.controllers;
 import com.example.matriculas.models.Materia;
 import com.example.matriculas.services.MateriaService;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,29 +29,39 @@ public class MateriaController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Materia> getMateriaById(@PathVariable Long id) {
-    return materiaService.obtenerMateriaPorId(id).map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+  public ResponseEntity<Object> getMateriaById(@PathVariable Long id) {
+    try {
+      return ResponseEntity.ok(materiaService.obtenerMateriaPorId(id));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
   @PostMapping
-  public Materia createMateria(@RequestBody Materia materia) {
-    return materiaService.crearMateria(materia);
+  public ResponseEntity<Object> createMateria(@RequestBody Materia materia) {
+    try {
+      return ResponseEntity.ok(materiaService.crearMateria(materia));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Materia> updateMateria(@PathVariable Long id, @RequestBody Materia materiaActualizada) {
+  public ResponseEntity<Object> updateMateria(@PathVariable Long id, @RequestBody Materia materiaActualizada) {
     try {
-      Materia materia = materiaService.actualizarMateria(id, materiaActualizada);
-      return ResponseEntity.ok(materia);
+      return ResponseEntity.ok(materiaService.actualizarMateria(id, materiaActualizada));
     } catch (RuntimeException e) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
     }
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteMateria(@PathVariable Long id) {
-    materiaService.eliminarMateria(id);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<Object> deleteMateria(@PathVariable Long id) {
+    try {
+      materiaService.eliminarMateria(id);
+      return ResponseEntity.ok(Map.of("response", "Materia eliminada correctamente"));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 }

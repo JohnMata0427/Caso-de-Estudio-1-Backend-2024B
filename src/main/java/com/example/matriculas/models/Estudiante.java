@@ -2,7 +2,7 @@ package com.example.matriculas.models;
 
 import java.time.LocalDate;
 import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,5 +50,6 @@ public class Estudiante {
   private String email;
 
   @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
   private List<Matricula> matriculas;
 }

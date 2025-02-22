@@ -4,6 +4,7 @@ import com.example.matriculas.models.Usuario;
 import com.example.matriculas.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,18 +20,30 @@ public class AuthController {
 	private UsuarioService usuarioService;
 
 	@PostMapping("/register")
-	public ResponseEntity<Map<String, Object>> register(@RequestBody Usuario usuario) {
-		return ResponseEntity.ok(usuarioService.registro(usuario));
+	public ResponseEntity<Object> register(@RequestBody Usuario usuario) {
+		try {
+			return ResponseEntity.ok(usuarioService.registro(usuario));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+		}
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Map<String, String>> login(@RequestBody Usuario request) {
-		return ResponseEntity.ok(usuarioService.iniciarSesion(request));
+	public ResponseEntity<Object> login(@RequestBody Usuario request) {
+		try {
+			return ResponseEntity.ok(usuarioService.iniciarSesion(request));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("response",
+					e instanceof BadCredentialsException ? "Correo o contraseña incorrectos" : e.getMessage()));
+		}
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<Map<String, Object>> profile() {
-		System.out.println("Profile");
-		return ResponseEntity.ok(usuarioService.perfil());
+	public ResponseEntity<Object> profile() {
+		try {
+			return ResponseEntity.ok(usuarioService.perfil());
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+		}
 	}
 }

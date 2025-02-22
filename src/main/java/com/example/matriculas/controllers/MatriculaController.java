@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/matriculas")
@@ -27,30 +28,40 @@ public class MatriculaController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Matricula> getMatriculaById(@PathVariable Long id) {
-    return matriculaService.obtenerMatriculaPorId(id).map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+  public ResponseEntity<Object> getMatriculaById(@PathVariable Long id) {
+    try {
+      return ResponseEntity.ok(matriculaService.obtenerMatriculaPorId(id));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
   @PostMapping
-  public Matricula createMatricula(@RequestBody Matricula matricula) {
-    return matriculaService.crearMatricula(matricula);
+  public ResponseEntity<Object> createMatricula(@RequestBody Matricula matricula) {
+    try {
+      return ResponseEntity.ok(matriculaService.crearMatricula(matricula));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Matricula> updateMatricula(@PathVariable Long id, @RequestBody Matricula matriculaActualizada) {
+  public ResponseEntity<Object> updateMatricula(@PathVariable Long id, @RequestBody Matricula matriculaActualizada) {
     try {
-      Matricula matricula = matriculaService.actualizarMatricula(id, matriculaActualizada);
-      return ResponseEntity.ok(matricula);
+      return ResponseEntity.ok(matriculaService.actualizarMatricula(id, matriculaActualizada));
     } catch (RuntimeException e) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
     }
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteMatricula(@PathVariable Long id) {
-    matriculaService.eliminarMatricula(id);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<Object> deleteMatricula(@PathVariable Long id) {
+    try {
+      matriculaService.eliminarMatricula(id);
+      return ResponseEntity.ok(Map.of("response", "Matricula eliminada correctamente"));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
 }

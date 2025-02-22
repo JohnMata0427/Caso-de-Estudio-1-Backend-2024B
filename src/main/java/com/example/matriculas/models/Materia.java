@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,5 +37,6 @@ public class Materia {
   private Integer creditos;
 
   @OneToMany(mappedBy = "materia", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
   private List<Matricula> matriculas;
 }

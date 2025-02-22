@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
@@ -27,30 +29,40 @@ public class EstudianteController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Estudiante> getEstudianteById(@PathVariable Long id) {
-    return estudianteService.obtenerEstudiantePorId(id).map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+  public ResponseEntity<Object> getEstudianteById(@PathVariable Long id) {
+    try {
+      return ResponseEntity.ok(estudianteService.obtenerEstudiantePorId(id));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
   @PostMapping
-  public Estudiante createEstudiante(@RequestBody Estudiante estudiante) {
-    return estudianteService.crearEstudiante(estudiante);
+  public ResponseEntity<Object> createEstudiante(@RequestBody Estudiante estudiante) {
+    try {
+      return ResponseEntity.ok(estudianteService.crearEstudiante(estudiante));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Estudiante> updateEstudiante(@PathVariable Long id,
+  public ResponseEntity<Object> updateEstudiante(@PathVariable Long id,
       @RequestBody Estudiante estudianteActualizado) {
     try {
-      Estudiante estudiante = estudianteService.actualizarEstudiante(id, estudianteActualizado);
-      return ResponseEntity.ok(estudiante);
+      return ResponseEntity.ok(estudianteService.actualizarEstudiante(id, estudianteActualizado));
     } catch (RuntimeException e) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
     }
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteEstudiante(@PathVariable Long id) {
-    estudianteService.eliminarEstudiante(id);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<Object> deleteEstudiante(@PathVariable Long id) {
+    try {
+      estudianteService.eliminarEstudiante(id);
+      return ResponseEntity.ok(Map.of("response", "Estudiante eliminado correctamente"));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
+    }
   }
 }

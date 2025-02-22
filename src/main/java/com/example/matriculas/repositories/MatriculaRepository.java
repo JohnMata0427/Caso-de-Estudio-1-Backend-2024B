@@ -8,5 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
   List<Matricula> findByEstudianteId(Long estudianteId);
+
   List<Matricula> findByMateriaId(Long materiaId);
+
+  boolean existsByCodigo(String codigo);
+
+  boolean existsByEstudianteIdAndMateriaId(Long estudianteId, Long materiaId);
 }
