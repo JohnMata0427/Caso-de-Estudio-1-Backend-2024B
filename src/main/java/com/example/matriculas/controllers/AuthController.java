@@ -1,10 +1,12 @@
 package com.example.matriculas.controllers;
 
-import com.example.matriculas.models.Usuario;
-import com.example.matriculas.services.UsuarioService;
+import com.example.matriculas.dto.LoginUsuarioDTO;
+import com.example.matriculas.dto.RegistroUsuarioDTO;
+import com.example.matriculas.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +19,10 @@ import java.util.Map;
 public class AuthController {
 
 	@Autowired
-	private UsuarioService usuarioService;
+	private AuthService usuarioService;
 
 	@PostMapping("/register")
-	public ResponseEntity<Object> register(@RequestBody Usuario usuario) {
+	public ResponseEntity<Object> register(@Validated @RequestBody RegistroUsuarioDTO usuario) {
 		try {
 			return ResponseEntity.ok(usuarioService.registro(usuario));
 		} catch (RuntimeException e) {
@@ -29,7 +31,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@RequestBody Usuario request) {
+	public ResponseEntity<Object> login(@Validated @RequestBody LoginUsuarioDTO request) {
 		try {
 			return ResponseEntity.ok(usuarioService.iniciarSesion(request));
 		} catch (Exception e) {

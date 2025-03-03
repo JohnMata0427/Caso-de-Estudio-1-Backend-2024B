@@ -3,11 +3,14 @@ package com.example.matriculas.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.example.matriculas.dto.MateriaDTO;
 import com.example.matriculas.models.Materia;
 import com.example.matriculas.models.Matricula;
 import com.example.matriculas.repositories.MateriaRepository;
 import com.example.matriculas.repositories.MatriculaRepository;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,9 @@ public class MateriaService {
   @Autowired
   private MatriculaRepository matriculaRepository;
 
+  @Autowired
+  private ModelMapper modelMapper;
+
   @Transactional(readOnly = true)
   public List<Materia> obtenerTodasLasMaterias() {
     return materiaRepository.findAll();
@@ -29,7 +35,7 @@ public class MateriaService {
   @Transactional(readOnly = true)
   public Optional<Object> obtenerMateriaPorId(Long id) {
     Materia materia = materiaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
+        .orElseThrow(() -> new RuntimeException("Materia con id " + id + " no encontrada"));
 
     List<Matricula> matriculas = matriculaRepository.findByMateriaId(id);
 
@@ -37,62 +43,30 @@ public class MateriaService {
   }
 
   @Transactional
-  public Materia crearMateria(Materia materia) {
-    String nombre = materia.getNombre();
+  public Materia crearMateria(MateriaDTO materia) {
     String codigo = materia.getCodigo();
-    String descripcion = materia.getDescripcion();
-    Integer creditos = materia.getCreditos();
-
-    if (nombre.isBlank() || codigo.isBlank() || descripcion.isBlank() || creditos == null)
-      throw new RuntimeException("Todos los campos son requeridos");
-
-    if (codigo.length() < 6 || codigo.length() > 8)
-      throw new RuntimeException("El código de la materia debe tener entre 6 y 8 caracteres");
-
-    if (nombre.length() < 3)
-      throw new RuntimeException("El nombre de la materia debe tener al menos 3 caracteres");
-
-    if (descripcion.length() < 10)
-      throw new RuntimeException("La descripción de la materia debe tener al menos 10 caracteres");
 
     if (materiaRepository.existsByCodigo(codigo))
       throw new RuntimeException("Ya existe una materia con el código " + codigo);
 
-    if (creditos < 0)
-      throw new RuntimeException("Los créditos no pueden ser negativos");
+    Materia materiaToSave = modelMapper.map(materia, Materia.class);
 
-    return materiaRepository.save(materia);
+    return materiaRepository.save(materiaToSave);
   }
 
   @Transactional
-  public Materia actualizarMateria(Long id, Materia materiaActualizada) {
+  public Materia actualizarMateria(Long id, MateriaDTO materiaActualizada) {
     Materia materia = materiaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
+        .orElseThrow(() -> new RuntimeException("Materia con id " + id + " no encontrada"));
 
-    String nombre = materiaActualizada.getNombre();
     String codigo = materiaActualizada.getCodigo();
-    String descripcion = materiaActualizada.getDescripcion();
-    Integer creditos = materiaActualizada.getCreditos();
 
-    if (!nombre.isBlank())
-      materia.setNombre(nombre);
+    if (!codigo.equals(materia.getCodigo()) && materiaRepository.existsByCodigo(codigo))
+      throw new RuntimeException("Ya existe una materia con el código " + codigo);
 
-    if (!codigo.isBlank()) {
-      if (!codigo.equals(materia.getCodigo()) && materiaRepository.existsByCodigo(codigo))
-        throw new RuntimeException("Ya existe una materia con el código " + codigo);
-      materia.setCodigo(codigo);
-    }
+    Materia materiaToUpdate = modelMapper.map(materiaActualizada, Materia.class);
 
-    if (!descripcion.isBlank())
-      materia.setDescripcion(descripcion);
-
-    if (creditos != null) {
-      if (creditos < 0)
-        throw new RuntimeException("Los créditos no pueden ser negativos");
-      materia.setCreditos(creditos);
-    }
-
-    return materiaRepository.save(materia);
+    return materiaRepository.save(materiaToUpdate);
   }
 
   @Transactional

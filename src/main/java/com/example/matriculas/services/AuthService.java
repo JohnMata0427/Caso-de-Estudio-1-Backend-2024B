@@ -1,7 +1,11 @@
 package com.example.matriculas.services;
 
+import com.example.matriculas.dto.LoginUsuarioDTO;
+import com.example.matriculas.dto.RegistroUsuarioDTO;
 import com.example.matriculas.models.Usuario;
 import com.example.matriculas.repositories.UsuarioRepository;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +18,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
-import java.util.regex.Pattern;
 
 @Service
-public class UsuarioService {
+public class AuthService {
 
   @Autowired
   private UsuarioRepository usuarioRepository;
@@ -30,44 +33,34 @@ public class UsuarioService {
 
   @Autowired
   private JwtService jwtService;
+  
+  @Autowired
+  private ModelMapper modelMapper;
 
   @Transactional
-  public Map<String, Object> registro(Usuario usuario) {
-    String nombre = usuario.getNombre();
-    String apellido = usuario.getApellido();
+  public Map<String, Object> registro(RegistroUsuarioDTO usuario) {
     String email = usuario.getEmail();
-    String password = usuario.getPassword();
-
-    if (nombre.isBlank() || apellido.isBlank() || email.isBlank() || password.isBlank())
-      throw new RuntimeException("Todos los campos son requeridos");
 
     if (usuarioRepository.existsByEmail(email))
       throw new RuntimeException("Ya existe un usuario con el email " + email);
 
-    Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$");
+    usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-    if (!pattern.matcher(password).matches())
-      throw new RuntimeException(
-          "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un caracter especial");
+    Usuario usuarioToSave = modelMapper.map(usuario, Usuario.class);
 
-    usuario.setPassword(passwordEncoder.encode(password));
-    usuarioRepository.save(usuario);
+    usuarioRepository.save(usuarioToSave);
 
-    return Map.of("response", "Usuario registrado exitosamente", "usuario", usuario);
+    return Map.of("response", "Usuario registrado exitosamente", "usuario", usuarioToSave);
   }
 
   @Transactional
-  public Map<String, String> iniciarSesion(Usuario request) {
+  public Map<String, String> iniciarSesion(LoginUsuarioDTO request) {
     String email = request.getEmail();
-    String password = request.getPassword();
-
-    if (email.isBlank() || password.isBlank())
-      throw new RuntimeException("Todos los campos son requeridos");
 
     if (!usuarioRepository.existsByEmail(email))
       throw new RuntimeException("Usuario con email " + email + " no registrado");
 
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.getPassword()));
 
     String token = jwtService.generateToken(email);
     return Map.of("response", "El usuario ha iniciado sesión exitosamente", "token", token);

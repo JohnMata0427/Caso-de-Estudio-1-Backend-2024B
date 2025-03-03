@@ -2,6 +2,8 @@ package com.example.matriculas.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.matriculas.dto.MatriculaDTO;
 import com.example.matriculas.models.Matricula;
 import com.example.matriculas.services.MatriculaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +41,7 @@ public class MatriculaController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> createMatricula(@RequestBody Matricula matricula) {
+  public ResponseEntity<Object> createMatricula(@Validated @RequestBody MatriculaDTO matricula) {
     try {
       return ResponseEntity.ok(matriculaService.crearMatricula(matricula));
     } catch (RuntimeException e) {
@@ -46,7 +50,7 @@ public class MatriculaController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> updateMatricula(@PathVariable Long id, @RequestBody Matricula matriculaActualizada) {
+  public ResponseEntity<Object> updateMatricula(@PathVariable Long id, @Validated @RequestBody MatriculaDTO matriculaActualizada) {
     try {
       return ResponseEntity.ok(matriculaService.actualizarMatricula(id, matriculaActualizada));
     } catch (RuntimeException e) {
@@ -58,7 +62,7 @@ public class MatriculaController {
   public ResponseEntity<Object> deleteMatricula(@PathVariable Long id) {
     try {
       matriculaService.eliminarMatricula(id);
-      return ResponseEntity.ok(Map.of("response", "Matricula eliminada correctamente"));
+      return ResponseEntity.ok(Map.of("response", "Matricula con id " + id + " eliminada exitosamente"));
     } catch (RuntimeException e) {
       return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
     }

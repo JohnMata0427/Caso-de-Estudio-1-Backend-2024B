@@ -1,5 +1,6 @@
 package com.example.matriculas.controllers;
 
+import com.example.matriculas.dto.EstudianteDTO;
 import com.example.matriculas.models.Estudiante;
 import com.example.matriculas.services.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
 @RequestMapping("/api/v1/estudiantes")
@@ -38,7 +40,7 @@ public class EstudianteController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> createEstudiante(@RequestBody Estudiante estudiante) {
+  public ResponseEntity<Object> createEstudiante(@Validated @RequestBody EstudianteDTO estudiante) {
     try {
       return ResponseEntity.ok(estudianteService.crearEstudiante(estudiante));
     } catch (RuntimeException e) {
@@ -48,7 +50,7 @@ public class EstudianteController {
 
   @PutMapping("/{id}")
   public ResponseEntity<Object> updateEstudiante(@PathVariable Long id,
-      @RequestBody Estudiante estudianteActualizado) {
+  @Validated @RequestBody EstudianteDTO estudianteActualizado) {
     try {
       return ResponseEntity.ok(estudianteService.actualizarEstudiante(id, estudianteActualizado));
     } catch (RuntimeException e) {
@@ -60,7 +62,7 @@ public class EstudianteController {
   public ResponseEntity<Object> deleteEstudiante(@PathVariable Long id) {
     try {
       estudianteService.eliminarEstudiante(id);
-      return ResponseEntity.ok(Map.of("response", "Estudiante eliminado correctamente"));
+      return ResponseEntity.ok(Map.of("response", "Estudiante con id " + id + " eliminado exitosamente"));
     } catch (RuntimeException e) {
       return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
     }

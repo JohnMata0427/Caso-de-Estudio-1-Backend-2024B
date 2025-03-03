@@ -1,5 +1,6 @@
 package com.example.matriculas.controllers;
 
+import com.example.matriculas.dto.MateriaDTO;
 import com.example.matriculas.models.Materia;
 import com.example.matriculas.services.MateriaService;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
 @RequestMapping("/api/v1/materias")
@@ -38,7 +40,7 @@ public class MateriaController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> createMateria(@RequestBody Materia materia) {
+  public ResponseEntity<Object> createMateria(@Validated @RequestBody MateriaDTO materia) {
     try {
       return ResponseEntity.ok(materiaService.crearMateria(materia));
     } catch (RuntimeException e) {
@@ -47,7 +49,7 @@ public class MateriaController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> updateMateria(@PathVariable Long id, @RequestBody Materia materiaActualizada) {
+  public ResponseEntity<Object> updateMateria(@PathVariable Long id, @Validated @RequestBody MateriaDTO materiaActualizada) {
     try {
       return ResponseEntity.ok(materiaService.actualizarMateria(id, materiaActualizada));
     } catch (RuntimeException e) {
@@ -59,7 +61,7 @@ public class MateriaController {
   public ResponseEntity<Object> deleteMateria(@PathVariable Long id) {
     try {
       materiaService.eliminarMateria(id);
-      return ResponseEntity.ok(Map.of("response", "Materia eliminada correctamente"));
+      return ResponseEntity.ok(Map.of("response", "Materia con id " + id + " eliminada exitosamente"));
     } catch (RuntimeException e) {
       return ResponseEntity.badRequest().body(Map.of("response", e.getMessage()));
     }
