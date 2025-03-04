@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.matriculas.repositories.MatriculaRepository;
-import com.example.matriculas.dto.EstudianteDTO;
-import com.example.matriculas.dto.MateriaDTO;
 import com.example.matriculas.dto.MatriculaDTO;
 import com.example.matriculas.models.Estudiante;
 import com.example.matriculas.models.Materia;
@@ -58,7 +56,6 @@ public class MatriculaService {
 
   @Transactional
   public Matricula crearMatricula(MatriculaDTO matricula) {
-
     String codigo = matricula.getCodigo();
     Long id_estudiante = matricula.getId_estudiante();
     Long id_materia = matricula.getId_materia();
@@ -79,13 +76,10 @@ public class MatriculaService {
     Materia materia = materiaRepository.findById(id_materia)
         .orElseThrow(() -> new RuntimeException("Materia con id " + id_materia + " no encontrada"));
 
-    EstudianteDTO estudianteToSave = modelMapper.map(estudiante, EstudianteDTO.class);
-    MateriaDTO materiaToSave = modelMapper.map(materia, MateriaDTO.class);
-
-    matricula.setEstudiante(estudianteToSave);
-    matricula.setMateria(materiaToSave);
-
     Matricula matriculaToSave = modelMapper.map(matricula, Matricula.class);
+
+    matriculaToSave.setEstudiante(estudiante);
+    matriculaToSave.setMateria(materia);
 
     return matriculaRepository.save(matriculaToSave);
   }
@@ -114,25 +108,21 @@ public class MatriculaService {
             "El estudiante con id " + id_estudiante + " ya está matriculado en la materia con id " + id_materia);
     }
 
+    Matricula matriculaToUpdate = modelMapper.map(matriculaActualizada, Matricula.class);
+
     if (actualizarEstudiante) {
       Estudiante estudiante = estudianteRepository.findById(id_estudiante)
           .orElseThrow(() -> new RuntimeException("Estudiante con id " + id_estudiante + " no encontrado"));
 
-      EstudianteDTO estudianteToSave = modelMapper.map(estudiante, EstudianteDTO.class);
-
-      matriculaActualizada.setEstudiante(estudianteToSave);
+      matriculaToUpdate.setEstudiante(estudiante);
     }
 
     if (actualizarMateria) {
       Materia materia = materiaRepository.findById(id_materia)
           .orElseThrow(() -> new RuntimeException("Materia con id " + id_materia + " no encontrada"));
 
-      MateriaDTO materiaToSave = modelMapper.map(materia, MateriaDTO.class);
-
-      matriculaActualizada.setMateria(materiaToSave);
+      matriculaToUpdate.setMateria(materia);
     }
-
-    Matricula matriculaToUpdate = modelMapper.map(matriculaActualizada, Matricula.class);
 
     return matriculaRepository.save(matriculaToUpdate);
   }
