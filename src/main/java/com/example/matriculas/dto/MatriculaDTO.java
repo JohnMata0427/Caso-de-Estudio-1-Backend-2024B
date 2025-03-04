@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatriculaDTO {
+  private Long id;
+  
   @NotBlank(message = "El código de la matrícula es obligatorio")
   @Pattern(regexp = "^(20\\d{2})[AB](\\d{4})$", message = "El código debe tener el formato de año, periodo (A o B) y numeración de 4 digitos (Ejemplo: 2024B0001)")
   private String codigo;
