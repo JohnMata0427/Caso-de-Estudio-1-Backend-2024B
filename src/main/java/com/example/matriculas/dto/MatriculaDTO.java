@@ -4,10 +4,12 @@ import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.Length;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatriculaDTO {
+  @Null(message = "El id de la matrícula no debe ser enviado, ya que se genera automáticamente")
   private Long id;
   
   @NotBlank(message = "El código de la matrícula es obligatorio")
@@ -29,10 +32,12 @@ public class MatriculaDTO {
 
   @NotNull(message = "El id del estudiante es obligatorio")
   @Positive(message = "El id del estudiante debe ser un número positivo")
+  @Digits(integer = 3, fraction = 0, message = "El id del estudiante debe ser un número entero de máximo 3 dígitos")
   private Long id_estudiante;
 
   @NotNull(message = "El id de la materia es obligatorio")
   @Positive(message = "El id de la materia debe ser un número positivo")
+  @Digits(integer = 3, fraction = 0, message = "El id de la materia debe ser un número entero de máximo 3 dígitos")
   private Long id_materia;
 
   private EstudianteDTO estudiante;

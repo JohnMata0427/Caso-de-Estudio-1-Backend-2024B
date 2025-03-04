@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Email;
@@ -17,6 +18,9 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EstudianteDTO {
+  @Null(message = "El id del estudiante no debe ser enviado, ya que se genera automáticamente")
+  private Long id;
+
   @NotBlank(message = "El nombre es obligatorio")
   @Length(min = 3, max = 40, message = "El nombre debe tener entre 3 y 40 caracteres")
   @Pattern(regexp = "^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$", message = "El nombre solo puede contener letras y espacios")

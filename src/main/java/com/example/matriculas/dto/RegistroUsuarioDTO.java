@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegistroUsuarioDTO {
+  @Null(message = "El id del usuario no debe ser enviado, ya que se genera automáticamente")
+  private Long id;
+
   @NotBlank(message = "El nombre es obligatorio")
   @Length(min = 3, max = 20, message = "El nombre de usuario debe tener entre 3 y 20 caracteres")
   private String nombre;
