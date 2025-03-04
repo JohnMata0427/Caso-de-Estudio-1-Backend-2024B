@@ -88,7 +88,7 @@ public class MatriculaService {
   @Transactional
   public Matricula actualizarMatricula(Long id, MatriculaDTO matriculaActualizada) {
     Matricula matricula = matriculaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("MatriculaDTO no encontrada"));
+        .orElseThrow(() -> new RuntimeException("Matricula no encontrada"));
 
     String codigo = matriculaActualizada.getCodigo();
     Long id_estudiante = matriculaActualizada.getId_estudiante();
@@ -114,8 +114,8 @@ public class MatriculaService {
     if (actualizarEstudiante) {
       Estudiante estudiante = estudianteRepository.findById(id_estudiante)
           .orElseThrow(() -> new RuntimeException("Estudiante con id " + id_estudiante + " no encontrado"));
-
-      matriculaToUpdate.setEstudiante(estudiante);
+          
+          matriculaToUpdate.setEstudiante(estudiante);
     }
 
     if (actualizarMateria) {
@@ -125,9 +125,11 @@ public class MatriculaService {
       matriculaToUpdate.setMateria(materia);
     }
 
+    matriculaToUpdate.setId(id);
+
     return matriculaRepository.save(matriculaToUpdate);
   }
-
+  
   @Transactional
   public void eliminarMatricula(Long id) {
     matriculaRepository.deleteById(id);

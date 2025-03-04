@@ -66,6 +66,8 @@ public class MateriaService {
 
     Materia materiaToUpdate = modelMapper.map(materiaActualizada, Materia.class);
 
+    materiaToUpdate.setId(id);
+
     return materiaRepository.save(materiaToUpdate);
   }
 

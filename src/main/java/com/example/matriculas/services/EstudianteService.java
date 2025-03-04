@@ -93,6 +93,8 @@ public class EstudianteService {
 
     Estudiante estudianteToUpdate = modelMapper.map(estudianteActualizado, Estudiante.class);
 
+    estudianteToUpdate.setId(id);
+
     return estudianteRepository.save(estudianteToUpdate);
   }
 

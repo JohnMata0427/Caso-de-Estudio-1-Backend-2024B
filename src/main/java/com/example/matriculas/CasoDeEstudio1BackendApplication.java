@@ -18,7 +18,7 @@ public class CasoDeEstudio1BackendApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
-				registry.addMapping("/api/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*");
+				registry.addMapping("/api/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE").allowedHeaders("*");
 			}
 		};
 	}
