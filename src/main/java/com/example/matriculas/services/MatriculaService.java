@@ -66,6 +66,9 @@ public class MatriculaService {
     if (matriculaRepository.existsByCodigo(codigo))
       throw new RuntimeException("Ya existe una matricula con el código " + codigo);
 
+    if (!matricula.isValidYearInCode())
+      throw new RuntimeException("El año en el código de la matrícula debe estar entre el año 2000 y el año actual");
+
     if (matriculaRepository.existsByEstudianteIdAndMateriaId(id_estudiante, id_materia))
       throw new RuntimeException("El estudiante con id " + id_estudiante + " ya está matriculado en la materia con id "
           + id_materia);
@@ -99,8 +102,11 @@ public class MatriculaService {
     if (!codigo.equals(matricula.getCodigo()) && matriculaRepository.existsByCodigo(codigo))
       throw new RuntimeException("Ya existe una matricula con el código " + codigo);
 
-    Boolean actualizarEstudiante = id_estudiante != matricula.getId_estudiante();
-    Boolean actualizarMateria = id_materia != matricula.getId_materia();
+    if (!matriculaActualizada.isValidYearInCode())
+      throw new RuntimeException("El año en el código de la matrícula debe estar entre el año 2000 y el año actual");
+
+    Boolean actualizarEstudiante = !id_estudiante.equals(matricula.getId_estudiante());
+    Boolean actualizarMateria = !id_materia.equals(matricula.getId_materia());
 
     if (actualizarEstudiante || actualizarMateria) {
       if (matriculaRepository.existsByEstudianteIdAndMateriaId(id_estudiante, id_materia))

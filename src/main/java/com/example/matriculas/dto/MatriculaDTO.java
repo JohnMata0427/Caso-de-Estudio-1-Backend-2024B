@@ -1,5 +1,7 @@
 package com.example.matriculas.dto;
 
+import java.time.LocalDate;
+
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotBlank;
@@ -15,12 +17,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MatriculaDTO {
   @NotBlank(message = "El código de la matrícula es obligatorio")
-  @Pattern(regexp = "^\\20d{2}[AB]\\d{4}$", message = "El código de la matrícula debe tener el formato año (A partir del 2000), periodo (A o B) y numeración hasta 9999 (Ejemplo: 2022A0001)")
+  @Pattern(regexp = "^(20\\d{2})[AB](\\d{4})$", message = "El código debe tener el formato de año, periodo (A o B) y numeración de 4 digitos (Ejemplo: 2024B0001)")
   private String codigo;
 
   @NotBlank(message = "La descripción de la matrícula es obligatoria")
   @Length(min = 10, max = 200, message = "La descripción de la matrícula debe tener entre 10 y 200 caracteres")
-  @Pattern(regexp = "^(?=.*[A-Za-z])[A-Za-zñÑáéíóúÁÉÍÓÚ#., ]{5,}$", message = "La descripción debe tener al menos 5 letras")
+  @Pattern(regexp = "^(?=(.*[A-Za-zñÑáéíóúÁÉÍÓÚ]){4}).{10,200}$", message = "La descripción debe tener al menos 4 letras")
   private String descripcion;
 
   @NotNull(message = "El id del estudiante es obligatorio")
@@ -33,4 +35,14 @@ public class MatriculaDTO {
 
   private EstudianteDTO estudiante;
   private MateriaDTO materia;
+
+  public boolean isValidYearInCode() {
+    if (codigo == null || codigo.length() < 4) return false;
+
+    int yearInCode = Integer.parseInt(codigo.substring(0, 4));
+
+    int currentYear = LocalDate.now().getYear();
+
+    return yearInCode <= currentYear;
+  }
 }

@@ -31,6 +31,6 @@ public class MateriaDTO {
 
   @NotBlank(message = "La descripción de la materia es obligatoria")
   @Length(min = 10, max = 200, message = "La descripción de la materia debe tener entre 10 y 200 caracteres")
-  @Pattern(regexp = "^(?=.*[A-Za-z])[A-Za-zñÑáéíóúÁÉÍÓÚ#., ]{5,}$", message = "La descripción debe tener al menos 5 letras")
+  @Pattern(regexp = "^(?=(.*[A-Za-zñÑáéíóúÁÉÍÓÚ]){4}).{10,200}$", message = "La descripción debe tener al menos 4 letras")
   private String descripcion;
 }

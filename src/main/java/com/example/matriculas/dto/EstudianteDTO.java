@@ -41,7 +41,7 @@ public class EstudianteDTO {
 
   @NotBlank(message = "La dirección es obligatoria")
   @Length(min = 10, max = 100, message = "La dirección debe tener entre 10 y 100 caracteres")
-  @Pattern(regexp = "^(?=.*[A-Za-z])[A-Za-zñÑáéíóúÁÉÍÓÚ0-9#., ]{5,}$", message = "La dirección debe tener al menos 5 letras")
+  @Pattern(regexp = "^(?=(.*[A-Za-zñÑáéíóúÁÉÍÓÚ]){4}).{10,100}$", message = "La dirección debe tener al menos 4 letras")
   private String direccion;
 
   @Pattern(regexp = "^09\\d{8}$", message = "El teléfono debe tener exactamente 10 dígitos y empezar con 09")
