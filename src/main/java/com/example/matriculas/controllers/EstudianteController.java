@@ -3,6 +3,9 @@ package com.example.matriculas.controllers;
 import com.example.matriculas.dto.EstudianteDTO;
 import com.example.matriculas.models.Estudiante;
 import com.example.matriculas.services.EstudianteService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +19,6 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 
 @RestController
 @RequestMapping("/api/v1/estudiantes")
@@ -40,7 +42,7 @@ public class EstudianteController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> createEstudiante(@Validated @RequestBody EstudianteDTO estudiante) {
+  public ResponseEntity<Object> createEstudiante(@Valid @RequestBody EstudianteDTO estudiante) {
     try {
       return ResponseEntity.ok(estudianteService.crearEstudiante(estudiante));
     } catch (RuntimeException e) {
@@ -50,7 +52,7 @@ public class EstudianteController {
 
   @PutMapping("/{id}")
   public ResponseEntity<Object> updateEstudiante(@PathVariable Long id,
-  @Validated @RequestBody EstudianteDTO estudianteActualizado) {
+  @Valid @RequestBody EstudianteDTO estudianteActualizado) {
     try {
       return ResponseEntity.ok(estudianteService.actualizarEstudiante(id, estudianteActualizado));
     } catch (RuntimeException e) {
