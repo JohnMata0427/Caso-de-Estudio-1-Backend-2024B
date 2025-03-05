@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +21,7 @@ import jakarta.persistence.Table;
 @AllArgsConstructor
 @Entity
 @Table(name = "materias")
+@Hidden
 public class Materia {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +30,7 @@ public class Materia {
   @Column(nullable = false)
   private String nombre;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false, unique = true, length = 7)
   private String codigo;
 
   @Column(nullable = false)

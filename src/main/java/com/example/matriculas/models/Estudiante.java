@@ -3,6 +3,8 @@ package com.example.matriculas.models;
 import java.time.LocalDate;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "estudiantes")
+@Hidden
 public class Estudiante {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

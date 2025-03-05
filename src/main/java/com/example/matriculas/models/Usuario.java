@@ -13,6 +13,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -21,6 +23,7 @@ import java.util.Collections;
 @AllArgsConstructor
 @Entity
 @Table(name = "usuarios")
+@Hidden
 public class Usuario implements UserDetails {
 
 	@Id

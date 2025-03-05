@@ -71,16 +71,17 @@ public class MatriculaService {
       throw new RuntimeException("El estudiante con id " + id_estudiante + " ya está matriculado en la materia con id "
           + id_materia);
 
-    Estudiante estudiante = estudianteRepository.findById(id_estudiante)
-        .orElseThrow(() -> new RuntimeException("Estudiante con id " + id_estudiante + " no encontrado"));
+    Boolean estudianteExistente = estudianteRepository.existsById(id_estudiante);
 
-    Materia materia = materiaRepository.findById(id_materia)
-        .orElseThrow(() -> new RuntimeException("Materia con id " + id_materia + " no encontrada"));
+    if (!estudianteExistente)
+      throw new RuntimeException("Estudiante con id " + id_estudiante + " no encontrado");
+
+    Boolean materiaExistente = materiaRepository.existsById(id_materia);
+
+    if (!materiaExistente)
+      throw new RuntimeException("Materia con id " + id_materia + " no encontrada");
 
     Matricula matriculaToSave = modelMapper.map(matricula, Matricula.class);
-
-    matriculaToSave.setEstudiante(estudiante);
-    matriculaToSave.setMateria(materia);
 
     return matriculaRepository.save(matriculaToSave);
   }
@@ -103,33 +104,24 @@ public class MatriculaService {
     Boolean actualizarEstudiante = !id_estudiante.equals(matricula.getId_estudiante());
     Boolean actualizarMateria = !id_materia.equals(matricula.getId_materia());
 
-    if (actualizarEstudiante || actualizarMateria) {
-      if (matriculaRepository.existsByEstudianteIdAndMateriaId(id_estudiante, id_materia))
-        throw new RuntimeException(
-            "El estudiante con id " + id_estudiante + " ya está matriculado en la materia con id " + id_materia);
-    }
+    if ((actualizarEstudiante || actualizarMateria)
+        && matriculaRepository.existsByEstudianteIdAndMateriaId(id_estudiante, id_materia))
+      throw new RuntimeException(
+          "El estudiante con id " + id_estudiante + " ya está matriculado en la materia con id " + id_materia);
+
+    if (actualizarEstudiante && !estudianteRepository.existsById(id_estudiante))
+      throw new RuntimeException("Estudiante con id " + id_estudiante + " no encontrado");
+
+    if (actualizarMateria && !materiaRepository.existsById(id_materia))
+      throw new RuntimeException("Materia con id " + id_materia + " no encontrada");
 
     Matricula matriculaToUpdate = modelMapper.map(matriculaActualizada, Matricula.class);
-
-    if (actualizarEstudiante) {
-      Estudiante estudiante = estudianteRepository.findById(id_estudiante)
-          .orElseThrow(() -> new RuntimeException("Estudiante con id " + id_estudiante + " no encontrado"));
-          
-          matriculaToUpdate.setEstudiante(estudiante);
-    }
-
-    if (actualizarMateria) {
-      Materia materia = materiaRepository.findById(id_materia)
-          .orElseThrow(() -> new RuntimeException("Materia con id " + id_materia + " no encontrada"));
-
-      matriculaToUpdate.setMateria(materia);
-    }
 
     matriculaToUpdate.setId(id);
 
     return matriculaRepository.save(matriculaToUpdate);
   }
-  
+
   @Transactional
   public void eliminarMatricula(Long id) {
     matriculaRepository.deleteById(id);
